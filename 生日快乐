@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+ <html lang="zh-CN">
+ <head>
+ <meta charset="UTF-8">
+ <title>生日快乐</title>
+ <style>
+ *{margin:0;padding:0;box-sizing:border-box}
+ body{
+   width:100vw;
+   height:100vh;
+   background:#f4a8b8;
+   overflow:hidden;
+   font-family:"Microsoft Yahei",sans-serif;
+ }
+ /* 漂浮方块 */
+ .box{
+   position:absolute;
+   background:#ffc8d4;
+   opacity:0.6;
+   animation: float 6s infinite ease-in-out;
+ }
+ @keyframes float{
+   0%{transform:translateY(100vh) rotate(0deg)}
+   100%{transform:translateY(-100px) rotate(360deg)}
+ }
+ /* 登录页 */
+ .title{
+   color:#fff;
+   font-size:22px;
+   margin-bottom:20px;
+   z-index:99;
+ }
+ .login-box{
+   display:flex;
+   gap:8px;
+   z-index:99;
+ }
+ input{
+   padding:8px;
+   border:none;
+   border-radius:6px;
+   outline:none;
+ }
+ button{
+   border:none;
+   padding:8px;
+   border-radius:6px;
+   background:#fff;
+   cursor:pointer;
+ }
+/* 页面容器 */
+ .page{
+   position:absolute;
+   top:0;left:0;
+   width:100vw;
+   height:100vh;
+   display:none;
+   z-index:98;
+ }
+ /* 第一组：粉色文字画面 */
+ #page1{
+   background:
+	 radial-gradient(circle at 20% 30%, rgba(255,255,255,0.18), transparent 25%),
+	 radial-gradient(circle at 80% 70%, rgba(255,255,255,0.15), transparent 28%),
+	 linear-gradient(135deg, #f4a8b8, #f6bcc8);
+	 }
+	 .page1-inner{
+   width:90%;
+   height:90%;
+   margin:5vh auto;
+   display:grid;
+   grid-template-columns:1fr 1fr;
+   gap:30px;
+   align-items:center;
+ }
+ .text-col{
+   display:flex;
+   flex-direction:column;
+   gap:14px;
+ }
+ .text-col.left{
+   text-align:left;
+   padding-left:20px;
+ }
+ .text-col.right{
+   text-align:right;
+   padding-right:20px;
+ }
+ .line-text{
+   color:#fff;
+   font-size:17px;
+   opacity:0;
+   transform:translateY(20px);
+   transition:all 0.7s ease;
+ }
+ .line-text.show{
+   opacity:1;
+   transform:translateY(0);
+ }
+ /* 照片页面共用样式 */
+.photo-page{
+   background:
+	 radial-gradient(circle at 30% 40%, rgba(255,255,255,0.2), transparent 30%),
+	 linear-gradient(135deg, #f8b6c7, #f4a8b8);
+ }
+ .photo-inner{
+   width:90%;
+   height:90%;
+   margin:5vh auto;
+   display:flex;
+   flex-direction:column;
+   justify-content:center;
+   align-items:center;
+   gap:30px;
+ }
+ .big-photo{
+   width:86%;
+   max-width:480px;
+   border-radius:18px;
+   box-shadow:0 10px 30px rgba(0,0,0,0.18);
+   opacity:0;
+   transform:scale(0.6);
+   transition:all 1s ease;
+ }
+ .big-photo.show{
+   opacity:1;
+   transform:scale(1);
+ }
+ .photo-text{
+   color:#fff;
+   font-size:18px;
+   text-align:center;
+   line-height:2;
+   opacity:0;
+   transform:translateY(20px);
+   transition:all 0.8s ease;
+ }
+ .photo-text.show{
+   opacity:1;
+   transform:translateY(0);
+ }
+ /* “点击查看”超链接文字 */
+ .click-link{
+   margin-top:30px;
+   color:#fff;
+   font-size:17px;
+   text-decoration:underline;
+   cursor:pointer;
+   opacity:0;
+   transform:translateY(10px);
+transition:all 0.8s ease;
+ }
+ .click-link.show{
+   opacity:1;
+   transform:translateY(0);
+ }
+ /* 最后烟花祝福页 */
+ #page5{
+   background:
+	 radial-gradient(circle at 50% 50%, rgba(255,255,255,0.12), transparent 35%),
+	 linear-gradient(135deg, #000000, #222222);
+	 }
+ .firework-final{
+   width:100%;
+   height:100%;
+   display:flex;
+   justify-content:center;
+   align-items:center;
+ }
+ .final-text{
+   color:#fff;
+   font-size:34px;
+   letter-spacing:4px;
+   text-shadow:
+	 0 0 10px #ff88dd,
+	 0 0 20px #ff44aa,
+	 0 0 30px #ff2288;
+   opacity:0;
+   transform:scale(0.7);
+   animation:finalShow 1.2s ease forwards;
+ }
+ @keyframes finalShow{
+   0%{
+	 opacity:0;
+	 transform:scale(0.7);
+   }
+   100%{
+	 opacity:1;
+	 transform:scale(1);
+   }
+ }
+ /* 烟花画布 */
+ #fireCanvas{
+   position:fixed;
+   top:0;
+   left:0;
+   width:100vw;
+   height:100vh;
+   z-index:1;
+   pointer-events:none;
+display:none;
+ }
+ </style>
+ </head>
+ <body>
+ <canvas id="fireCanvas"></canvas>
+ <!-- 登录页 -->
+ <div class="title" style="position:relative;z-index:99">嘻嘻❤生日快乐!（输入放大后请缩小食用）</div>
+ <div class="login-box" style="position:relative;z-index:99">
+   <input id="pwd" type="text" placeholder="输入暗号">
+   <button onclick="checkPwd()">进入</button>
+ </div>
+ <!-- 第1页：8排文字 -->
+ <section class="page" id="page1">
+   <div class="page1-inner">
+	 <div class="text-col left">
+	   <div class="line-text">愿你自由如烈焰原燎。</div>
+	   <div class="line-text">不惧世俗喧嚣。</div>
+	   <div class="line-text">但愿始终温暖有光</div>
+	   <div class="line-text">有初心不老，光芒闪耀。</div>
+	 </div>
+	 <div class="text-col right">
+	   <div class="line-text">永远都有精力奔向远方</div>
+	   <div class="line-text">愿你自由如云霓满天，</div>
+	   <div class="line-text">于荆棘中成长，以热爱奔赴远方</div>
+ 		<div class="line-text">祝你无烦恼，永远青春且年少。</div>
+	 </div>
+   </div>
+ </section>
+ <!-- 第2页 照片组1 -->
+ <section class="page photo-page" id="page2">
+   <div class="photo-inner">
+	 <img class="big-photo" id="pic1" src="photo1.jpg" alt="照片1">
+	 <div class="photo-text" id="p1t1">还记得吗？那次我们三个人出去玩</div>
+	 <div class="photo-text" id="p1t2">很有意义的一天，做了很多之前从没做过的事</div>
+	 <div class="photo-text" id="p1t3">（♡´∀`♡）</div>
+   </div>
+ </section>
+ <!-- 第3页 照片组2 -->
+ <section class="page photo-page" id="page3">
+   <div class="photo-inner">
+	 <img class="big-photo" id="pic2" src="photo2.jpg" alt="照片2">
+	 <div class="photo-text" id="p2t1">这次是四个人啦</div>
+	 <div class="photo-text" id="p2t2">看了很多很多的东西，也留下了不少回忆</div>
+	 <div class="photo-text" id="p2t3">这怎么不算属于我们的少女时代？</div>
+	 </div>
+ </section>
+ <!-- 第4页 照片组3 -->
+ <section class="page photo-page" id="page4">
+   <div class="photo-inner">
+display:none;
+ }
+ </style>
+ </head>
+ <body>
+ <canvas id="fireCanvas"></canvas>
+ <!-- 登录页 -->
+ <div class="title" style="position:relative;z-index:99">嘻嘻❤生日快乐!（输入放大后请缩小食用）</div>
+ <div class="login-box" style="position:relative;z-index:99">
+   <input id="pwd" type="text" placeholder="输入暗号">
+   <button onclick="checkPwd()">进入</button>
+ </div>
+ <!-- 第1页：8排文字 -->
+ <section class="page" id="page1">
+   <div class="page1-inner">
+	 <div class="text-col left">
+	   <div class="line-text">愿你自由如烈焰原燎。</div>
+	   <div class="line-text">不惧世俗喧嚣。</div>
+	   <div class="line-text">但愿始终温暖有光</div>
+	   <div class="line-text">有初心不老，光芒闪耀。</div>
+	 </div>
+	 <div class="text-col right">
+	   <div class="line-text">永远都有精力奔向远方</div>
+	   <div class="line-text">愿你自由如云霓满天，</div>
+	   <div class="line-text">于荆棘中成长，以热爱奔赴远方</div>
+ 		<div class="line-text">祝你无烦恼，永远青春且年少。</div>
+	 </div>
+   </div>
+ </section>
+ <!-- 第2页 照片组1 -->
+ <section class="page photo-page" id="page2">
+   <div class="photo-inner">
+	 <img class="big-photo" id="pic1" src="photo1.jpg" alt="照片1">
+	 <div class="photo-text" id="p1t1">还记得吗？那次我们三个人出去玩</div>
+	 <div class="photo-text" id="p1t2">很有意义的一天，做了很多之前从没做过的事</div>
+	 <div class="photo-text" id="p1t3">（♡´∀`♡）</div>
+   </div>
+ </section>
+ <!-- 第3页 照片组2 -->
+ <section class="page photo-page" id="page3">
+   <div class="photo-inner">
+	 <img class="big-photo" id="pic2" src="photo2.jpg" alt="照片2">
+	 <div class="photo-text" id="p2t1">这次是四个人啦</div>
+	 <div class="photo-text" id="p2t2">看了很多很多的东西，也留下了不少回忆</div>
+	 <div class="photo-text" id="p2t3">这怎么不算属于我们的少女时代？</div>
+	 </div>
+ </section>
+ <!-- 第4页 照片组3 -->
+ <section class="page photo-page" id="page4">
+   <div class="photo-inner">
+ let index = 0;
+   function showLine(){
+	   if(index < lines.length){
+	   lines[index].classList.add("show");
+	   index++;
+	   setTimeout(showLine,2000);
+	 }else{
+	   //全部文字显示完，等待切换到第2页
+	   setTimeout(startPage2,3000);
+	 }
+   }
+   showLine();
+ }
+ //第2页 照片组1
+ function startPage2(){
+   document.getElementById("page1").style.display="none";
+   document.getElementById("page2").style.display="block";
+   const photo = document.getElementById("pic1");
+   const t1 = document.getElementById("p1t1");
+   const t2 = document.getElementById("p1t2");
+   const t3 = document.getElementById("p1t3");
+   setTimeout(()=>{
+	 photo.classList.add("show");
+	 setTimeout(()=>t1.classList.add("show"),1000);
+	 setTimeout(()=>t2.classList.add("show"),2000);
+	 setTimeout(()=>t3.classList.add("show"),3000);
+   },400);
+   //页面停留时间，之后跳到第3页
+   setTimeout(startPage3,8000);
+ }
+ //第3页 照片组2
+ function startPage3(){
+	 document.getElementById("page2").style.display="none";
+   document.getElementById("page3").style.display="block";
+   const photo = document.getElementById("pic2");
+   const t1 = document.getElementById("p2t1");
+   const t2 = document.getElementById("p2t2");
+   const t3 = document.getElementById("p2t3");
+   setTimeout(()=>{
+	 photo.classList.add("show");
+	 setTimeout(()=>t1.classList.add("show"),1000);
+	 setTimeout(()=>t2.classList.add("show"),2000);
+	 setTimeout(()=>t3.classList.add("show"),3000);
+   },400);
+   setTimeout(startPage4,8000);
+ }
+ //第4页 照片组3
+ function startPage4(){
+   document.getElementById("page3").style.display="none";
+   document.getElementById("page4").style.display="block";
+const photo = document.getElementById("pic3");
+   const t1 = document.getElementById("p3t1");
+   const t2 = document.getElementById("p3t2");
+   const t3 = document.getElementById("p3t3");
+   const link = document.getElementById("clickLink");
+   setTimeout(()=>{
+	 photo.classList.add("show");
+	 setTimeout(()=>t1.classList.add("show"),1000);
+	 setTimeout(()=>t2.classList.add("show"),2000);
+	 setTimeout(()=>t3.classList.add("show"),3000);
+	 // 第三行文字出来后，再显示“点击查看”
+	 setTimeout(()=>link.classList.add("show"),3200);
+   },400);
+   // 点击跳转到最后烟花祝福页
+   link.addEventListener("click",startPage5);
+ }
+ //第5页：最后烟花祝福页（增强烟花版本）
+ function startPage5(){
+   document.getElementById("page4").style.display="none";
+   document.getElementById("page5").style.display="block";
+   if(fireTimer){
+	 clearInterval(fireTimer);
+   }
+   // 背景持续烟花
+   fireTimer = setInterval(createFirework,1800);
+   // 额外增强：更亮、更大的彩色烟花
+   setInterval(()=>{
+	 const x = Math.random()*w;
+	 const y = Math.random()*h/2;
+	 const colors = ['#ff2266','#ffdd44','#22ddff','#ff66cc','#88ff44'];
+	 const color = colors[Math.floor(Math.random()*colors.length)];
+	 for(let i=0;i<140;i++){
+	   particles.push(new Particle(x,y,color));
+	 }
+   },900);
+ }
+ // =====================烟花=====================
+ const canvas = document.getElementById('fireCanvas');
+ const ctx = canvas.getContext('2d');
+ let w, h;
+ let fireTimer = null;
+ function resizeCanvas(){
+   w = canvas.width = window.innerWidth;
+   h = canvas.height = window.innerHeight;
+ }
+ resizeCanvas();
+ window.addEventListener('resize',resizeCanvas);
+ //增强粒子
+ class Particle{
+   constructor(x,y,color){
+this.x = x;
+	 this.y = y;
+	 this.speedX = Math.random()*7 - 3.5;
+	 this.speedY = Math.random()*7 - 3.5;
+	 this.alpha = 1;
+	 this.color = color;
+	 this.size = Math.random()*2.2 + 1.1;
+   }
+   update(){
+	 this.x += this.speedX;
+	 this.y += this.speedY;
+	 this.alpha -= 0.012;
+   }
+   draw(){
+	 ctx.save();
+	 ctx.globalAlpha = this.alpha;
+	 ctx.fillStyle = this.color;
+	 ctx.beginPath();
+	 ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+	 ctx.fill();
+	 ctx.restore();
+   }
+ }
+ let particles = [];
+ function createFirework(){
+   const x = Math.random()*w;
+   const y = Math.random()*h/2;
+   const colors = ['#ff4444','#ffdd44','#44ddff','#ff88dd','#88ff88'];
+   const color = colors[Math.floor(Math.random()*colors.length)];
+   for(let i=0;i<80;i++) particles.push(new Particle(x,y,color));
+ }
+ function animate(){
+   ctx.clearRect(0,0,w,h);
+   for(let i=particles.length-1;i>=0;i--){
+	 particles[i].update();
+	 particles[i].draw();
+	 if(particles[i].alpha <=0) particles.splice(i,1);
+   }
+   requestAnimationFrame(animate);
+ }
+ animate();
+ function startFirework(){
+   fireTimer = setInterval(createFirework,3000);
+ }
+ </script>
+ </body>
+ </html>
