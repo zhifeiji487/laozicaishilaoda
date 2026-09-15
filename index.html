@@ -203,6 +203,12 @@ display:none;
  </style>
  </head>
  <body>
+ <script>
+  const audio = document.getElementById("bgMusic");
+  document.body.addEventListener('click',()=>{
+	audio.play();
+  })
+</script>
  <canvas id="fireCanvas"></canvas>
  <!-- 登录页 -->
  <div class="title" style="position:relative;z-index:99">嘻嘻❤生日快乐!（输入放大后请缩小食用）</div>
@@ -242,63 +248,63 @@ display:none;
 	 <img class="big-photo" id="pic2" src="photo2.jpg" alt="照片2">
 	 <div class="photo-text" id="p2t1">这次是四个人啦</div>
 	 <div class="photo-text" id="p2t2">看了很多很多的东西，也留下了不少回忆</div>
-	 <div class="photo-text" id="p2t3">这怎么不算属于我们的少女时代？</div>
+	 	 <div class="photo-text" id="p2t3">这怎么不算属于我们的少女时代？</div>
 	 </div>
  </section>
  <!-- 第4页 照片组3 -->
  <section class="page photo-page" id="page4">
    <div class="photo-inner">
-display:none;
+	 <img class="big-photo" id="pic3" src="photo3.jpg" alt="照片3">
+	 <div class="photo-text" id="p3t1">这个我的印象真的很深刻</div>
+	 <div class="photo-text" id="p3t2">原来只是一次分享，也能被记这么久</div>
+	 <div class="photo-text" id="p3t3">（♡´∀`♡）</div>
+	 <!-- 新增：点击查看 -->
+	 <a id="clickLink" class="click-link" href="javascript:void(0)">点击查看</a>
+   </div>
+ </section>
+ <!-- 最后烟花祝福页 -->
+ <section class="page" id="page5">
+   <div class="firework-final">
+	 <h1 class="final-text">老薛，十八岁生日快乐</h1>
+   </div>
+ </section>
+ <!-- 背景音乐 -->
+ <audio id="bgMusic" loop>
+   <source src="birthday.mp3" type="audio/mpeg">
+ <script>
+ // 漂浮方块
+ function createSquare(){
+   const div = document.createElement("div");
+   div.classList.add("box");
+   let size = Math.random()*30 +10;
+   div.style.width = size+"px";
+   div.style.height = size+"px";
+   div.style.left = Math.random()*100 +"%";
+   div.style.animationDuration = Math.random()*4+4+"s";
+   document.body.appendChild(div);
+   setTimeout(()=>div.remove(),10000)
  }
- </style>
- </head>
- <body>
- <canvas id="fireCanvas"></canvas>
- <!-- 登录页 -->
- <div class="title" style="position:relative;z-index:99">嘻嘻❤生日快乐!（输入放大后请缩小食用）</div>
- <div class="login-box" style="position:relative;z-index:99">
-   <input id="pwd" type="text" placeholder="输入暗号">
-   <button onclick="checkPwd()">进入</button>
- </div>
- <!-- 第1页：8排文字 -->
- <section class="page" id="page1">
-   <div class="page1-inner">
-	 <div class="text-col left">
-	   <div class="line-text">愿你自由如烈焰原燎。</div>
-	   <div class="line-text">不惧世俗喧嚣。</div>
-	   <div class="line-text">但愿始终温暖有光</div>
-	   <div class="line-text">有初心不老，光芒闪耀。</div>
-	 </div>
-	 <div class="text-col right">
-	   <div class="line-text">永远都有精力奔向远方</div>
-	   <div class="line-text">愿你自由如云霓满天，</div>
-	   <div class="line-text">于荆棘中成长，以热爱奔赴远方</div>
- 		<div class="line-text">祝你无烦恼，永远青春且年少。</div>
-	 </div>
-   </div>
- </section>
- <!-- 第2页 照片组1 -->
- <section class="page photo-page" id="page2">
-   <div class="photo-inner">
-	 <img class="big-photo" id="pic1" src="photo1.jpg" alt="照片1">
-	 <div class="photo-text" id="p1t1">还记得吗？那次我们三个人出去玩</div>
-	 <div class="photo-text" id="p1t2">很有意义的一天，做了很多之前从没做过的事</div>
-	 <div class="photo-text" id="p1t3">（♡´∀`♡）</div>
-   </div>
- </section>
- <!-- 第3页 照片组2 -->
- <section class="page photo-page" id="page3">
-   <div class="photo-inner">
-	 <img class="big-photo" id="pic2" src="photo2.jpg" alt="照片2">
-	 <div class="photo-text" id="p2t1">这次是四个人啦</div>
-	 <div class="photo-text" id="p2t2">看了很多很多的东西，也留下了不少回忆</div>
-	 <div class="photo-text" id="p2t3">这怎么不算属于我们的少女时代？</div>
-	 </div>
- </section>
- <!-- 第4页 照片组3 -->
- <section class="page photo-page" id="page4">
-   <div class="photo-inner">
- let index = 0;
+ setInterval(createSquare,300);
+ // 暗号登录
+ function checkPwd(){
+   let inputVal = document.getElementById("pwd").value;
+   // 在这里改暗号
+   if(inputVal === "20080927"){
+	 document.querySelector(".title").style.display="none";
+	 document.querySelector(".login-box").style.display="none";
+	 document.getElementById("fireCanvas").style.display="block";
+	 startFirework();
+	 document.getElementById("bgMusic").play();
+	 startPage1();
+   }else{
+	 alert("暗号不对哦，再试试！");
+}
+ }
+ // 第1页：8排文字依次出现
+ function startPage1(){
+   document.getElementById("page1").style.display="block";
+   const lines = document.querySelectorAll(".line-text");
+   let index = 0;
    function showLine(){
 	   if(index < lines.length){
 	   lines[index].classList.add("show");
@@ -342,13 +348,13 @@ display:none;
 	 setTimeout(()=>t2.classList.add("show"),2000);
 	 setTimeout(()=>t3.classList.add("show"),3000);
    },400);
-   setTimeout(startPage4,8000);
+	    setTimeout(startPage4,8000);
  }
  //第4页 照片组3
  function startPage4(){
    document.getElementById("page3").style.display="none";
    document.getElementById("page4").style.display="block";
-const photo = document.getElementById("pic3");
+   const photo = document.getElementById("pic3");
    const t1 = document.getElementById("p3t1");
    const t2 = document.getElementById("p3t2");
    const t3 = document.getElementById("p3t3");
@@ -392,13 +398,13 @@ const photo = document.getElementById("pic3");
  function resizeCanvas(){
    w = canvas.width = window.innerWidth;
    h = canvas.height = window.innerHeight;
- }
+}
  resizeCanvas();
  window.addEventListener('resize',resizeCanvas);
  //增强粒子
  class Particle{
    constructor(x,y,color){
-this.x = x;
+	 this.x = x;
 	 this.y = y;
 	 this.speedX = Math.random()*7 - 3.5;
 	 this.speedY = Math.random()*7 - 3.5;
